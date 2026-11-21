@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Хроники Средиземья</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+:root{
+  --bg:var(--tg-theme-bg-color,#f6f1e7);--bg2:var(--tg-theme-secondary-bg-color,#ece4d3);
+  --text:var(--tg-theme-text-color,#2b2418);--hint:var(--tg-theme-hint-color,#8a7d66);
+  --link:var(--tg-theme-link-color,#8a6a1f);--btn:var(--tg-theme-button-color,#8a6a1f);
+  --btn-text:var(--tg-theme-button-text-color,#fff);--section:var(--tg-theme-section-bg-color,var(--bg));
+  --danger:var(--tg-theme-destructive-text-color,#c0392b);--gold:#b8923a;
+  --ok:#2e8b57;--warn:#c98a12;--radius:14px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg2);color:var(--text);font:15px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+header{position:sticky;top:0;z-index:5;background:var(--bg);padding:12px 14px 0;border-bottom:1px solid color-mix(in srgb,var(--hint) 25%,transparent)}
+h1{margin:0;font:600 18px/1.2 Georgia,"Times New Roman",serif;letter-spacing:.3px;display:flex;align-items:center;gap:8px}
+h1 .ring{width:20px;height:20px;border-radius:50%;border:3px solid var(--gold);box-shadow:0 0 6px color-mix(in srgb,var(--gold) 60%,transparent)}
+.sub{color:var(--hint);font-size:12.5px;margin:3px 0 8px}
+.tabs{display:flex;gap:4px}
+.tab{flex:1;border:0;background:none;color:var(--hint);padding:9px 0 10px;font:600 14px inherit;border-bottom:2px solid transparent;cursor:pointer}
+.tab.on{color:var(--text);border-color:var(--gold)}
+main{padding:12px 12px 90px}
+.chips{display:flex;gap:6px;overflow-x:auto;padding-bottom:8px;scrollbar-width:none}
+.chip{flex:none;border:1px solid color-mix(in srgb,var(--hint) 35%,transparent);background:var(--section);color:var(--text);border-radius:999px;padding:5px 11px;font-size:13px;cursor:pointer}
+.chip.on{background:var(--btn);color:var(--btn-text);border-color:var(--btn)}
+.card{background:var(--section);border-radius:var(--radius);padding:12px 13px;margin:8px 0;cursor:pointer;box-shadow:0 1px 2px rgba(0,0,0,.05)}
+.row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.id{font:600 13px ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--link)}
+.tag{color:var(--hint);font-size:12.5px}
+.title{font-weight:600;margin-top:3px}
+.badge{margin-left:auto;font-size:12px;padding:2px 8px;border-radius:999px;background:var(--bg2);white-space:nowrap}
+.b-review{background:#e9dcff;color:#5a3e9a}.b-ok{background:#dff3e6;color:#22693f}.b-rework{background:#fff0d6;color:#8a5a00}
+.b-rej{background:#fde2e0;color:#9b2c22}.b-def{background:#e8eef5;color:#41556b}.b-plan{background:#fff6cc;color:#7a5d00}.b-pub{background:#dde9ff;color:#21458a}
+.queued{font-size:12px;color:var(--warn);margin-top:6px}
+.preview{color:var(--hint);font-size:13px;margin-top:4px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.empty{color:var(--hint);text-align:center;padding:30px 10px}
+.status{font-size:12.5px;padding:8px 12px;border-radius:10px;margin-bottom:8px;background:var(--section)}
+.status.bad{color:var(--warn)}
+.sheet{position:fixed;inset:0;background:var(--bg);z-index:10;overflow-y:auto;padding:14px 14px 120px;display:none}
+.sheet.on{display:block}
+.sheet img{width:100%;border-radius:12px;margin:10px 0;background:var(--bg2);min-height:60px}
+.text{white-space:pre-wrap;word-wrap:break-word;background:var(--section);border-radius:12px;padding:12px;margin:10px 0}
+.meta{color:var(--hint);font-size:13px;margin:4px 0}
+.comment{background:#fff6e0;color:#5c4300;border-radius:10px;padding:9px 11px;margin:8px 0;font-size:14px}
+.acts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}
+button.a{border:0;border-radius:12px;padding:12px 8px;font:600 14.5px inherit;cursor:pointer;background:var(--bg2);color:var(--text)}
+button.a.primary{background:var(--btn);color:var(--btn-text)}
+button.a.danger{color:var(--danger)}
+button.a:disabled{opacity:.5}
+textarea{width:100%;min-height:90px;border-radius:12px;border:1px solid color-mix(in srgb,var(--hint) 40%,transparent);background:var(--section);color:var(--text);padding:10px;font:inherit}
+.slot{background:var(--section);border-radius:var(--radius);padding:11px 13px;margin:8px 0}
+.slot .when{font-weight:600}
+.slot .btns{display:flex;gap:6px;margin-top:8px}
+.slot .btns button{flex:1;padding:8px;font-size:13.5px}
+.small{font-size:12.5px;color:var(--hint)}
+.hist{font-size:12.5px;color:var(--hint);margin:2px 0}
+.pick{background:var(--section);border-radius:12px;padding:10px 12px;margin:6px 0;cursor:pointer}
+.back{border:0;background:none;color:var(--link);font:600 15px inherit;padding:4px 0;cursor:pointer}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:rgba(30,25,15,.92);color:#fff;padding:9px 14px;border-radius:10px;font-size:14px;z-index:20;display:none;max-width:90%}
+.ap{font-size:12px;margin-top:4px}
+</style>
+</head>
+<body>
+<header>
+  <h1><span class="ring"></span>Хроники Средиземья</h1>
+  <div class="sub" id="sub">Загружаю…</div>
+  <nav class="tabs">
+    <button class="tab on" data-tab="backlog">Бэклог</button>
+    <button class="tab" data-tab="plan">План</button>
+    <button class="tab" data-tab="log">Журнал</button>
+  </nav>
+</header>
+<main id="main"></main>
+<div class="sheet" id="sheet"></div>
+<div class="toast" id="toast"></div>
+<script>
+"use strict";
+const API = "https://kbhlqrnfeaqlqbsoyyvc.supabase.co/functions/v1/me-miniapp";
+const tg = window.Telegram && window.Telegram.WebApp;
+const S = { state: null, tab: "backlog", filter: "На одобрении", open: null, pick: null, imgs: {}, busy: false, err: "" };
+const ST_CLASS = {"На одобрении":"b-review","Одобрен":"b-ok","На доработке":"b-rework","Отклонён":"b-rej","Отложен":"b-def","В плане":"b-plan","Опубликован":"b-pub"};
+const ACT_RU = {approve:"Одобрить",rework:"На доработку",reject:"Отклонить",defer:"Отложить",cancel:"Отменить план",remove:"Убрать из слота",set:"Поставить в слот",propose:"Предложить план"};
+const PLAN_RU = {proposed:"предложен",approved:"утверждён",cancelled:"отменён",superseded:"заменён новым"};
+const AP_RU = {scheduled:"⏰ ждёт слота в Supabase",retry:"🔁 повтор отправки",publishing:"📤 отправляется",published:"✅ опубликован автоматически",failed:"⚠️ не удалось",uncertain:"❓ неизвестно, вышел ли — проверь канал",missed:"⌛ пропущен",held:"⏸ период без публикаций",cancelled:"снят"};
+
+const $ = (s, r=document) => r.querySelector(s);
+function el(tag, attrs={}, ...kids){
+  const e = document.createElement(tag);
+  for (const [k,v] of Object.entries(attrs)) {
+    if (k === "class") e.className = v; else if (k.startsWith("on")) e.addEventListener(k.slice(2), v);
+    else if (v !== false && v != null) e.setAttribute(k, v === true ? "" : v);
+  }
+  for (const k of kids.flat()) if (k != null && k !== false) e.append(k instanceof Node ? k : document.createTextNode(String(k)));
+  return e;
+}
+function toast(t){ const x=$("#toast"); x.textContent=t; x.style.display="block"; clearTimeout(toast.t); toast.t=setTimeout(()=>x.style.display="none",2600); }
+function fmt(iso){ if(!iso) return ""; const d=new Date(iso); return d.toLocaleString("ru-RU",{timeZone:"Europe/Moscow",day:"2-digit",month:"2-digit",hour:"2-digit",minute:"2-digit"}); }
+function ago(iso){ if(!iso) return "никогда"; const s=(Date.now()-new Date(iso))/1000; if(s<90) return "только что"; if(s<3600) return Math.round(s/60)+" мин назад"; if(s<86400) return Math.round(s/3600)+" ч назад"; return fmt(iso); }
+function haptic(kind){ try{ tg && tg.HapticFeedback && tg.HapticFeedback.notificationOccurred(kind); }catch(e){} }
+
+async function call(op, body={}){
+  const r = await fetch(API, {method:"POST", headers:{"Content-Type":"application/json","X-Telegram-Init-Data": tg ? tg.initData : ""}, body: JSON.stringify({op, ...body})});
+  if (op === "image") { if(!r.ok) throw new Error("image "+r.status); return r.blob(); }
+  const j = await r.json().catch(()=>({error:"bad response"}));
+  if (!r.ok) throw Object.assign(new Error(j.error || ("HTTP "+r.status)), {status:r.status, reason:j.reason});
+  return j;
+}
+
+function pendingFor(kind, target){
+  return (S.state?.actions||[]).filter(a => a.kind===kind && (a.target===target || (kind==="plan" && a.action==="propose" && target==="*")) && (a.status==="pending"||a.status==="claimed"));
+}
+function anyPending(){ return (S.state?.actions||[]).some(a => a.status==="pending"||a.status==="claimed"); }
+function schedFor(slot){ return (S.state?.scheduled||[]).find(r => r.slot===slot); }
+
+async function load(){
+  try {
+    const first = !S.state;
+    S.state = await call("state"); S.err = "";
+    if (first && !(S.state.posts||[]).some(p => p.status === S.filter)) {
+      const order = ["На одобрении","На доработке","Одобрен","В плане","Отложен","Опубликован"];
+      S.filter = order.find(st => (S.state.posts||[]).some(p => p.status === st)) || "Все";
+    }
+  }
+  catch(e){ S.err = e.status===401 ? (e.reason==="expired" ? "Сессия устарела — закройте и откройте приложение заново." : "Доступ только для Константина, из Telegram.") : "Нет связи с сервером, повторю…"; }
+  render();
+  clearTimeout(load.t); load.t = setTimeout(load, anyPending() ? 3000 : 15000);
+}
+
+async function act(kind, target, action, payload={}){
+  if (S.busy) return; S.busy = true;
+  try {
+    const r = await call("act", {kind, target, action, payload});
+    haptic("success"); toast(r.duplicate ? "Уже в очереди" : "В очереди — бот применит и обновит сообщение в Telegram");
+    await load();
+  } catch(e){ haptic("error"); toast("Не получилось: " + e.message); }
+  finally { S.busy = false; render(); }
+}
+function confirmThen(text, fn){ if (tg && tg.showConfirm) tg.showConfirm(text, ok => ok && fn()); else if (confirm(text)) fn(); }
+
+function workerLine(){
+  const m = S.state?.meta || {};
+  const p = m.worker_post?.seen_at, q = m.worker_plan?.seen_at;
+  const fresh = t => t && (Date.now()-new Date(t)) < 120000;
+  const parts = [];
+  parts.push(fresh(p) ? "Гэндальф на связи" : "Гэндальф: был " + ago(p));
+  parts.push(fresh(q) ? "Элронд на связи" : "Элронд: был " + ago(q));
+  const pub = m.publisher;
+  const pubTxt = pub ? (pub.ready ? "автопубликация включена" : (/GANDALF_TG_BOT_TOKEN/.test(pub.error||"") ? "автопубликация ждёт токен бота в Supabase (пока публикует компьютер агентов)" : "автопубликация недоступна: " + (pub.error||""))) : "";
+  return { text: parts.join(" · ") + (pubTxt ? " · " + pubTxt : ""), ok: fresh(p) && fresh(q) };
+}
+
+function render(){
+  const sub = $("#sub");
+  if (S.err && !S.state) { sub.textContent = S.err; $("#main").replaceChildren(el("div",{class:"empty"}, S.err)); return; }
+  if (!S.state) return;
+  const w = workerLine();
+  sub.textContent = (S.err ? S.err + " · " : "") + "обновлено " + fmt(S.state.now);
+  const main = $("#main");
+  const kids = [];
+  kids.push(el("div",{class:"status"+(w.ok?"":" bad")}, w.text, w.ok ? "" : " — действия ждут в очереди и применятся, когда компьютер агентов проснётся."));
+  if (S.tab === "backlog") kids.push(...renderBacklog());
+  else if (S.tab === "plan") kids.push(...renderPlan());
+  else kids.push(...renderLog());
+  main.replaceChildren(...kids);
+  renderSheet();
+}
+
+function renderBacklog(){
+  const posts = S.state.posts || [];
+  const order = ["На одобрении","На доработке","Одобрен","В плане","Отложен","Опубликован","Отклонён","Все"];
+  const count = s => s==="Все" ? posts.length : posts.filter(p=>p.status===s).length;
+  const chips = el("div",{class:"chips"}, order.filter(s => s==="Все"||count(s)).map(s => el("button",{class:"chip"+(S.filter===s?" on":""), onclick:()=>{S.filter=s; render();}}, `${s} ${count(s)}`)));
+  const list = posts.filter(p => S.filter==="Все" || p.status===S.filter).slice().reverse();
+  const out = [chips];
+  if (!list.length) out.push(el("div",{class:"empty"},"Здесь пусто"));
+  for (const p of list){
+    const q = pendingFor("post", p.id);
+    out.push(el("div",{class:"card", onclick:()=>{S.open=p.id; S.reworkOpen=false; renderSheet();}},
+      el("div",{class:"row"}, el("span",{class:"id"},p.id), el("span",{class:"tag"},p.rubric_tag||""), el("span",{class:"badge "+(ST_CLASS[p.status]||"")}, p.status)),
+      el("div",{class:"title"}, p.title || "Без названия"),
+      el("div",{class:"preview"}, (p.text||"").slice(0,220)),
+      q.length ? el("div",{class:"queued"},"⏳ в очереди: " + q.map(a=>ACT_RU[a.action]).join(", ")) : null,
+      p.slot_label ? el("div",{class:"small"},"Слот: " + p.slot_label) : null));
+  }
+  return out;
+}
+
+async function loadImage(key, img){
+  if (S.imgs[key]) { img.src = S.imgs[key]; return; }
+  try { const b = await call("image", {key}); S.imgs[key] = URL.createObjectURL(b); img.src = S.imgs[key]; }
+  catch(e){ img.alt = "Картинка не загрузилась"; }
+}
+
+function renderSheet(){
+  const sh = $("#sheet");
+  if (!S.open && !S.pick) { sh.classList.remove("on"); tg && tg.BackButton && tg.BackButton.hide(); return; }
+  sh.classList.add("on"); tg && tg.BackButton && tg.BackButton.show();
+  if (S.pick) return renderPicker(sh);
+  const p = (S.state.posts||[]).find(x => x.id === S.open);
+  if (!p) { S.open = null; return renderSheet(); }
+  const q = pendingFor("post", p.id);
+  const kids = [el("button",{class:"back", onclick:closeSheet},"‹ Назад"),
+    el("div",{class:"row"}, el("span",{class:"id"},p.id), el("span",{class:"tag"},p.rubric_tag||""), el("span",{class:"badge "+(ST_CLASS[p.status]||"")}, p.status)),
+    el("h2",{style:"margin:6px 0 0;font:600 19px Georgia,serif"}, p.title || "Без названия")];
+  if (p.image_key) { const img = el("img",{alt:""}); kids.push(img); loadImage(p.image_key, img); }
+  else if (p.has_image) kids.push(el("div",{class:"meta"},"🖼 Картинка есть на компьютере агентов, но ещё не загружена"));
+  kids.push(el("div",{class:"text"}, p.text || ""));
+  if (p.comment) kids.push(el("div",{class:"comment"},"✏️ Комментарий: " + p.comment));
+  kids.push(el("div",{class:"meta"}, `Создан ${fmt(p.created)}` + (p.decided_at ? ` · решение ${fmt(p.decided_at)}` : "") + (p.slot_label ? ` · слот ${p.slot_label}` : "") + (p.channel_message_id ? ` · в канале #${p.channel_message_id}` : "")));
+  if (p.autopublish?.state) kids.push(el("div",{class:"meta"}, "Автопубликация: " + (AP_RU[p.autopublish.remote_status] || p.autopublish.state)));
+  if (q.length) kids.push(el("div",{class:"queued"},"⏳ В очереди: " + q.map(a=>ACT_RU[a.action]).join(", ") + ". Бот применит и обновит сообщение в Telegram."));
+  const dis = q.length > 0 || S.busy;
+  if (p.status === "На одобрении") {
+    kids.push(el("div",{class:"acts"},
+      el("button",{class:"a primary", disabled:dis, onclick:()=>act("post",p.id,"approve")},"✅ Одобрить"),
+      el("button",{class:"a", disabled:dis, onclick:()=>{S.reworkOpen=true; renderSheet();}},"✏️ На доработку"),
+      el("button",{class:"a danger", disabled:dis, onclick:()=>confirmThen(`Отклонить ${p.id}?`, ()=>act("post",p.id,"reject"))},"❌ Отклонить"),
+      el("button",{class:"a", disabled:dis, onclick:()=>act("post",p.id,"defer")},"⏸ Отложить")));
+  }
+  if ((p.status === "На одобрении" && S.reworkOpen) || p.status === "На доработке") {
+    const ta = el("textarea",{placeholder: p.status==="На доработке" ? "Новый комментарий для Гэндальфа…" : "Что изменить или дополнить?", maxlength:"2000"});
+    kids.push(ta, el("div",{class:"acts"}, el("button",{class:"a primary", disabled:dis, style:"grid-column:1/3", onclick:()=>{
+      const c = ta.value.trim(); if(!c){ toast("Напишите комментарий"); return; }
+      act("post", p.id, "rework", {comment:c}); S.reworkOpen=false; }}, p.status==="На доработке" ? "Отправить комментарий" : "Отправить на доработку")));
+  }
+  const h = (p.history||[]).slice().reverse();
+  if (h.length) { kids.push(el("div",{class:"small",style:"margin-top:14px"},"История")); for (const x of h) kids.push(el("div",{class:"hist"}, `${fmt(x.ts)} · ${x.event}${x.status?" → "+x.status:""}${x.comment?" · «"+x.comment+"»":""}`)); }
+  sh.replaceChildren(...kids);
+}
+function closeSheet(){ S.open=null; S.pick=null; renderSheet(); }
+
+function currentPlan(){
+  const plans = S.state.plans || [];
+  return plans.find(p => p.status==="proposed") || plans[0] || null;
+}
+function renderPlan(){
+  const out = [];
+  const pl = currentPlan();
+  const proposeQ = (S.state.actions||[]).filter(a => a.kind==="plan" && a.action==="propose" && (a.status==="pending"||a.status==="claimed"));
+  if (!pl) out.push(el("div",{class:"empty"},"Плана пока нет"));
+  else {
+    const q = pendingFor("plan", pl.id);
+    out.push(el("div",{class:"card",style:"cursor:default"},
+      el("div",{class:"row"}, el("span",{class:"id"},pl.id), el("span",{class:"badge"}, PLAN_RU[pl.status]||pl.status)),
+      el("div",{class:"small"}, "Создан " + fmt(pl.created) + (pl.tg_message_id ? " · сообщение в @ElrondElfBot" : " · в Telegram не отправлялся")),
+      q.length ? el("div",{class:"queued"},"⏳ в очереди: " + q.map(a=>ACT_RU[a.action] + (a.payload?.slot!=null ? " (слот "+(a.payload.slot+1)+")" : "")).join(", ")) : null));
+    const editable = pl.status === "proposed";
+    for (const it of pl.items||[]) {
+      const past = it.slot_at && new Date(it.slot_at) < new Date();
+      const sc = schedFor(it.slot);
+      out.push(el("div",{class:"slot"},
+        el("div",{class:"when"}, `${it.idx+1}. ${it.slot_label}` + (past && editable ? " (время прошло)" : "")),
+        it.post_id ? el("div",{}, el("span",{class:"id"},it.post_id), " ", el("span",{class:"tag"}, it.rubric_tag), " · ", it.title || "", it.post_status ? el("span",{class:"small"}," — "+it.post_status) : null)
+                   : el("div",{class:"small"},"пусто"),
+        it.skipped ? el("div",{class:"small"},"пропущен при утверждении") : null,
+        it.missed ? el("div",{class:"small"},"слот пропущен") : null,
+        sc && sc.post_id===it.post_id ? el("div",{class:"ap"}, AP_RU[sc.status] || sc.status, sc.last_error && sc.status!=="published" ? " · " + sc.last_error : "") : null,
+        editable ? el("div",{class:"btns"},
+          el("button",{class:"a", disabled:q.length>0, onclick:()=>{S.pick={plan:pl.id, idx:it.idx}; renderSheet();}}, it.post_id ? "🔁 Заменить" : "➕ Заполнить"),
+          it.post_id ? el("button",{class:"a danger", disabled:q.length>0, onclick:()=>act("plan",pl.id,"remove",{slot:it.idx})},"🗑 Убрать") : null) : null));
+    }
+    if (editable) out.push(el("div",{class:"acts"},
+      el("button",{class:"a primary", disabled:q.length>0, onclick:()=>confirmThen("Утвердить план? Посты встанут в очередь публикации.", ()=>act("plan",pl.id,"approve"))},"✅ Утвердить план"),
+      el("button",{class:"a danger", disabled:q.length>0, onclick:()=>confirmThen("Отменить план?", ()=>act("plan",pl.id,"cancel"))},"❌ Отменить")));
+  }
+  out.push(el("div",{class:"acts"}, el("button",{class:"a", style:"grid-column:1/3", disabled:proposeQ.length>0, onclick:()=>confirmThen("Составить новый план на 2 дня из одобренных постов? Неутверждённый план будет заменён.", ()=>act("plan","new","propose"))}, proposeQ.length ? "⏳ План составляется…" : "📅 Предложить новый план")));
+  const cand = (S.state.meta?.state?.candidates)||[];
+  out.push(el("div",{class:"small"}, `Одобренных постов: ${cand.length}`));
+  return out;
+}
+function renderPicker(sh){
+  const pl = (S.state.plans||[]).find(p => p.id===S.pick.plan);
+  const used = new Set((pl?.items||[]).map(i=>i.post_id).filter(Boolean));
+  const cand = (S.state.posts||[]).filter(p => p.status==="Одобрен" && !used.has(p.id));
+  const kids = [el("button",{class:"back", onclick:()=>{S.pick=null; renderSheet();}},"‹ Назад"), el("h3",{},`Пост для слота ${S.pick.idx+1}`)];
+  if (!cand.length) kids.push(el("div",{class:"empty"},"Нет свободных одобренных постов"));
+  for (const p of cand) kids.push(el("div",{class:"pick", onclick:()=>{ const pk=S.pick; S.pick=null; renderSheet(); act("plan", pk.plan, "set", {slot:pk.idx, post_id:p.id}); }},
+    el("span",{class:"id"},p.id)," ",el("span",{class:"tag"},p.rubric_tag)," · ",p.title||"", p.target_date ? el("div",{class:"small"},"дата: "+p.target_date) : null));
+  sh.replaceChildren(...kids);
+}
+
+function renderLog(){
+  const acts = S.state.actions || [];
+  const ST = {pending:"⏳ в очереди", claimed:"⚙️ применяется", done:"✅ готово", failed:"⚠️ не применено"};
+  const out = [];
+  if (!acts.length) out.push(el("div",{class:"empty"},"Действий из приложения ещё не было"));
+  for (const a of acts) out.push(el("div",{class:"card",style:"cursor:default"},
+    el("div",{class:"row"}, el("span",{class:"id"}, a.target==="new" ? "новый план" : a.target), el("span",{}, ACT_RU[a.action]||a.action), el("span",{class:"badge"}, ST[a.status]||a.status)),
+    a.payload?.comment ? el("div",{class:"small"},"«"+a.payload.comment+"»") : null,
+    el("div",{class:"small"}, fmt(a.created_at) + (a.result?.toast ? " · " + a.result.toast : "") + (a.error ? " · " + a.error : "")),
+    a.status==="pending" ? el("button",{class:"a",style:"margin-top:6px;padding:7px 12px", onclick:async(e)=>{e.stopPropagation(); try{ await call("cancel",{id:a.id}); toast("Отменено"); load(); }catch(err){ toast(err.message); }}},"Отменить") : null));
+  return out;
+}
+
+document.querySelectorAll(".tab").forEach(b => b.addEventListener("click", () => {
+  S.tab = b.dataset.tab; document.querySelectorAll(".tab").forEach(x => x.classList.toggle("on", x===b)); closeSheet(); render(); window.scrollTo(0,0);
+}));
+document.addEventListener("visibilitychange", () => { if (!document.hidden) load(); });
+{ const qp = new URLSearchParams(location.search);
+  if (["backlog","plan","log"].includes(qp.get("tab"))) { S.tab = qp.get("tab"); document.querySelectorAll(".tab").forEach(x => x.classList.toggle("on", x.dataset.tab===S.tab)); }
+  if (/^(HER|QUO|DAY|HUM)-\d{4}$/.test(qp.get("post")||"")) S.open = qp.get("post"); }
+if (tg) { tg.ready(); tg.expand(); tg.BackButton.onClick(closeSheet); try{ tg.setHeaderColor("bg_color"); }catch(e){} }
+if (!tg || !tg.initData) { $("#sub").textContent = "Откройте через бота в Telegram"; $("#main").replaceChildren(el("div",{class:"empty"},"Это мини‑приложение работает только внутри Telegram: кнопка «Приложение» в @GandalfGrayBot или @ElrondElfBot.")); }
+else load();
+</script>
+</body>
+</html>
